@@ -1,3 +1,4 @@
+import java.lang.Integer;
 /**
  * A class to model a simple email client. The client is run by a
  * particular user, and sends and retrieves mail via a particular server.
@@ -60,9 +61,9 @@ public class MailClient
         return mensaje;
     }
     
-    public String getNumberOfMessageInServer() {
-        String a = "";
-        return a;
+    public int getNumberOfMessageInServer() {
+        int messageNum = server.howManyMailItems(user);
+        return messageNum;
     }
     
     public MailItem getLastReceivedMail() {

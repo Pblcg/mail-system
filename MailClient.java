@@ -1,4 +1,7 @@
 import java.lang.Integer;
+import java.util.List;
+import java.util.ArrayList;
+
 /**
  * A class to model a simple email client. The client is run by a
  * particular user, and sends and retrieves mail via a particular server.
@@ -12,6 +15,8 @@ public class MailClient
     private MailServer server;
     // The user running this client.
     private String user;
+    
+    private List<MailItem> items;
 
     /**
      * Create a mail client run by user and attached to the given server.
@@ -20,6 +25,7 @@ public class MailClient
     {
         this.server = server;
         this.user = user;
+        items = new ArrayList<MailItem>();
     }
 
     /**
@@ -27,7 +33,11 @@ public class MailClient
      */
     public MailItem getNextMailItem()
     {
-        return server.getNextMailItem(user);
+        MailItem item = server.getNextMailItem(user);
+        if (item != null) {
+            items.add(item);
+        }
+        return item;
     }
 
     /**
@@ -62,13 +72,19 @@ public class MailClient
     }
     
     public int getNumberOfMessageInServer() {
-        int messageNum = server.howManyMailItems(user);
-        return messageNum;
+        return server.howManyMailItems(user);
     }
     
     public MailItem getLastReceivedMail() {
-        MailItem a = new MailItem("a", "b", "c", "d");
-        return a;
+        MailItem lastMailItem = new MailItem("","","","");
+        
+        if (items.isEmpty()) {
+            lastMailItem = null;
+        } else {
+            lastMailItem = items.get(items.size() - 1);
+        }
+        
+        return lastMailItem;
     }
     
     public int receiveAndAutorespond() {

@@ -87,9 +87,12 @@ public class MailClient
         return lastMailItem;
     }
     
-    public int receiveAndAutorespond() {
-        int a = 1;
-        return a;
+    public void receiveAndAutorespond() {
+        MailItem receivedItem = server.getNextMailItem(user);
+        if (receivedItem != null) {
+            String message = "Gracias por su mensaje. Le contestare lo antes posible. " + receivedItem.getMessage();
+            sendMailItem(receivedItem.getFrom(), "RE: " + receivedItem.getSubject(), message);
+        }
     }
     
     public int getStatus() {

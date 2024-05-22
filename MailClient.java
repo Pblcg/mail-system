@@ -34,12 +34,18 @@ public class MailClient
     public MailItem getNextMailItem()
     {
         MailItem item = server.getNextMailItem(user);
+        
+        if (item != null && esSpam(item)) {
+            return null; 
+        }
+        
         if (item != null) {
             items.add(item);
         }
+        
         return item;
     }
-
+    
     /**
      * Print the next mail item (if any) for this user to the text 
      * terminal.
@@ -47,14 +53,16 @@ public class MailClient
     public void printNextMailItem()
     {
         MailItem item = server.getNextMailItem(user);
+        
         if(item == null) {
             System.out.println("No new mail.");
-        }
-        else {
+        } else if (esSpam(item)) {
+            System.out.println("Mensaje recibido de spam");
+        } else {
             item.print();
         }
     }
-
+    
     /**
      * Send the given message to the given recipient via
      * the attached mail server.
@@ -89,6 +97,7 @@ public class MailClient
     
     public void receiveAndAutorespond() {
         MailItem receivedItem = server.getNextMailItem(user);
+        
         if (receivedItem != null) {
             String message = "Gracias por su mensaje. Le contestare lo antes posible. " + receivedItem.getMessage();
             sendMailItem(receivedItem.getFrom(), "RE: " + receivedItem.getSubject(), message);
@@ -96,7 +105,20 @@ public class MailClient
     }
     
     public int getStatus() {
-        int a = 1;
-        return a;
+        return 1;
+    }
+    
+    private boolean esSpam(MailItem item) {
+        String message = item.getMessage();
+        String subject = item.getSubject();
+        boolean isSpam = false;
+        
+        if (subject.contains(user)) {
+            isSpam = false;
+        } else if (message.contains("loteria") || message.contains("viagra")) {
+            isSpam = true;
+        }
+        
+        return isSpam;
     }
 }

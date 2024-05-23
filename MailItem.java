@@ -70,4 +70,15 @@ public class MailItem
         System.out.println("Subject: " + subject);
         System.out.println("Message: " + message);
     }
+    
+    public int charCounter() {
+        String[] caracteres = message.split("");
+        int charNumber = 0;
+        
+        for (String caracter : caracteres) {
+            charNumber++;
+        }
+        
+        return charNumber;
+    }
 }

@@ -17,6 +17,10 @@ public class MailClient
     private String user;
     
     private List<MailItem> items;
+    
+    private int recibidos;
+    
+    private int enviados;
 
     /**
      * Create a mail client run by user and attached to the given server.
@@ -26,6 +30,8 @@ public class MailClient
         this.server = server;
         this.user = user;
         items = new ArrayList<MailItem>();
+        recibidos = 0;
+        enviados = 0;
     }
 
     /**
@@ -42,6 +48,8 @@ public class MailClient
         if (item != null) {
             items.add(item);
         }
+        
+        recibidos++;
         
         return item;
     }
@@ -73,10 +81,7 @@ public class MailClient
     {
         MailItem item = new MailItem(user, to, subject, message);
         server.post(item);
-    }
-    
-    public String sendMailItem(String correo, String asunto, String subject, String mensaje) {
-        return mensaje;
+        enviados++;
     }
     
     public int getNumberOfMessageInServer() {
@@ -104,8 +109,17 @@ public class MailClient
         }
     }
     
-    public int getStatus() {
-        return 1;
+    public String getStatus() {
+        String persona = emisorMensajeMasLargo();
+        int tamañoMensaje = tamañoMensajeMasLargo();
+        
+        if (tamañoMensaje == 0) {
+            return recibidos + "," + enviados + "," + persona + ",";
+        } else {
+            return recibidos + "," + enviados + "," + persona + "," + tamañoMensaje;
+        }
+        
+        
     }
     
     private boolean esSpam(MailItem item) {
@@ -120,5 +134,29 @@ public class MailClient
         }
         
         return isSpam;
+    }
+    
+    private String emisorMensajeMasLargo() {
+        int max = 0;
+        String nombre = "";
+        
+        for (MailItem item : items) {
+            if (item.charCounter() > max) {
+                max = item.charCounter();
+                nombre = item.getFrom();
+            }
+        }
+        return nombre;
+    }
+    
+    private int tamañoMensajeMasLargo() {
+        int max = 0;
+        
+        for (MailItem item : items) {
+            if (item.charCounter() > max) {
+                max = item.charCounter();
+            }
+        }
+        return max;
     }
 }
